@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ChatWave - WhatsApp Like</title>
+    <title>ChatWave - AryaX</title>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.2/firebase-database-compat.js"></script>
@@ -32,7 +32,6 @@
             --danger: #e74c3c;
             --online: #25d366;
             --status-ring: #00a884;
-            --typing: #00a884;
         }
 
         body.dark {
@@ -168,6 +167,7 @@
             padding: 32px;
             width: 100%;
             max-width: 400px;
+            margin: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
 
@@ -267,6 +267,7 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
         }
 
         .header-title {
@@ -413,20 +414,18 @@
             display: inline-block;
         }
 
-        .typing-indicator {
-            font-size: 0.7rem;
-            color: var(--typing);
-            font-style: italic;
-        }
-
-        /* Read Receipt */
-        .read-status {
-            font-size: 0.65rem;
-            margin-left: 4px;
-            display: inline-block;
-        }
-
         /* Chat Room */
+        .chat-room {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            background: var(--bg-chat);
+        }
+
+        .chat-room.active {
+            display: flex;
+        }
+
         .chat-header {
             padding: 12px 16px;
             background: var(--bg-secondary);
@@ -434,6 +433,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex-shrink: 0;
         }
 
         .back-btn {
@@ -443,6 +443,9 @@
             cursor: pointer;
             color: var(--text-primary);
             padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .chat-messages {
@@ -452,7 +455,6 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
-            background: var(--bg-chat);
         }
 
         .message {
@@ -476,8 +478,8 @@
         }
 
         .message-media {
-            max-width: 250px;
-            max-height: 250px;
+            max-width: 200px;
+            max-height: 200px;
             border-radius: 12px;
             margin-bottom: 4px;
             cursor: pointer;
@@ -500,13 +502,17 @@
             color: var(--text-secondary);
         }
 
+        .read-status {
+            font-size: 0.65rem;
+        }
+
         .chat-input-area {
             padding: 12px 16px;
             background: var(--bg-secondary);
             display: flex;
             gap: 8px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-shrink: 0;
         }
 
         .media-buttons {
@@ -522,6 +528,9 @@
             color: var(--text-secondary);
             padding: 8px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .chat-input {
@@ -547,9 +556,12 @@
             color: white;
             font-size: 1.2rem;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Typing Indicator in Chat */
+        /* Typing Indicator */
         .typing-bubble {
             align-self: flex-start;
             background: var(--bg-message-in);
@@ -701,12 +713,53 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
+        }
+
+        /* My Status Card */
+        .my-status-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .add-status-btn {
+            background: var(--accent);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         @media (max-width: 768px) {
             .message {
                 max-width: 85%;
+            }
+            .user-avatar, .chat-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-item {
+                padding: 6px 8px;
+            }
+            .nav-icon {
+                font-size: 1.2rem;
+            }
+            .nav-item span {
+                font-size: 0.6rem;
             }
         }
     </style>
@@ -764,7 +817,7 @@
             </div>
         </div>
 
-        <!-- Content Area -->
+        <!-- Content Area (Pages) -->
         <div class="content-area" id="contentArea">
             <!-- Chats Page -->
             <div id="chatsPage" class="page active">
@@ -782,13 +835,13 @@
 
             <!-- Status Page -->
             <div id="statusPage" class="page">
-                <div style="background: var(--bg-card); border-radius: 20px; padding: 16px; margin: 12px; display: flex; align-items: center; gap: 16px; border: 1px solid var(--border);">
+                <div class="my-status-card">
                     <div class="avatar-small" id="myStatusAvatar" style="width: 50px; height: 50px;">U</div>
                     <div class="user-info">
                         <div class="user-name">My Status</div>
                         <div class="user-bio" id="myStatusText">Tap to add status update</div>
                     </div>
-                    <button class="add-status-btn" style="background: var(--accent); border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; color: white; cursor: pointer;" onclick="addStatus()">+</button>
+                    <button class="add-status-btn" onclick="addStatus()">+</button>
                 </div>
                 <div class="status-list" id="statusList">
                     <div class="empty-state">No status updates</div>
@@ -821,8 +874,8 @@
             </div>
         </div>
 
-        <!-- Chat Room View -->
-        <div id="chatRoomView" style="display: none; flex-direction: column; height: 100%;">
+        <!-- Chat Room (separate from pages) -->
+        <div id="chatRoom" class="chat-room">
             <div class="chat-header">
                 <button class="back-btn" onclick="closeChat()">←</button>
                 <div class="chat-avatar" id="chatRoomAvatar">U</div>
@@ -871,10 +924,10 @@
     </div>
 
     <!-- Hidden File Inputs -->
-    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="uploadImageFile(this)">
-    <input type="file" id="videoInput" accept="video/*" style="display: none;" onchange="uploadVideoFile(this)">
-    <input type="file" id="statusImageInput" accept="image/*" style="display: none;" onchange="uploadStatusImage(this)">
-    <input type="file" id="statusVideoInput" accept="video/*" style="display: none;" onchange="uploadStatusVideo(this)">
+    <input type="file" id="imageInput" accept="image/*" style="display: none;">
+    <input type="file" id="videoInput" accept="video/*" style="display: none;">
+    <input type="file" id="statusImageInput" accept="image/*" style="display: none;">
+    <input type="file" id="statusVideoInput" accept="video/*" style="display: none;">
 
     <script>
         // ==================== FIREBASE CONFIG ====================
@@ -884,7 +937,7 @@
     authDomain: "chatwave-3f136.firebaseapp.com",
     databaseURL: "https://chatwave-3f136-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "chatwave-3f136",
-    storageBucket: "chatwave-3f136.appspot.com",
+    storageBucket: "chatwave-3f136.firebasestorage.app",
     messagingSenderId: "649075826929",
     appId: "1:649075826929:web:0b47ceecb664cbcc750950",
     measurementId: "G-JTX8B5KVV7"
@@ -948,7 +1001,7 @@
         function showNotification(msg) {
             const notif = document.createElement('div');
             notif.textContent = msg;
-            notif.style.cssText = `position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 10px 20px; border-radius: 28px; z-index: 3000; font-size: 0.9rem;`;
+            notif.style.cssText = `position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 10px 20px; border-radius: 28px; z-index: 3000; font-size: 0.9rem; white-space: nowrap;`;
             document.body.appendChild(notif);
             setTimeout(() => notif.remove(), 2000);
         }
@@ -983,14 +1036,16 @@
 
         // ==================== AUTH FUNCTIONS ====================
         function switchTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
             
             if (tab === 'login') {
-                document.querySelectorAll('.auth-tab')[0].classList.add('active');
+                tabs[0].classList.add('active');
                 document.getElementById('loginForm').classList.add('active');
             } else {
-                document.querySelectorAll('.auth-tab')[1].classList.add('active');
+                tabs[1].classList.add('active');
                 document.getElementById('registerForm').classList.add('active');
             }
         }
@@ -1089,6 +1144,7 @@
             localStorage.removeItem('currentUser');
             if (messageListener) messageListener();
             if (typingListener) typingListener();
+            closeChat();
             document.getElementById('loginModal').style.display = 'flex';
             document.getElementById('appContainer').style.display = 'none';
             showNotification('Logged out');
@@ -1299,10 +1355,15 @@
             document.getElementById('chatRoomAvatar').textContent = getAvatarLetter(user.displayName || otherUser);
             document.getElementById('chatRoomAvatar').style.background = getAvatarColor(otherUser);
             
+            // Hide content area, show chat room
             document.getElementById('contentArea').style.display = 'none';
-            document.getElementById('chatRoomView').style.display = 'flex';
+            document.getElementById('chatRoom').classList.add('active');
             document.querySelector('.bottom-nav').style.display = 'none';
             
+            // Clear messages container
+            document.getElementById('chatMessages').innerHTML = '';
+            
+            // Setup message listener
             if (messageListener) messageListener();
             messageListener = database.ref('messages/' + activeChatId).on('value', (snapshot) => {
                 renderMessages(snapshot.val());
@@ -1310,6 +1371,12 @@
             
             setupTypingListener();
             await markMessagesAsRead();
+            
+            // Focus input
+            setTimeout(() => {
+                const input = document.getElementById('messageInput');
+                if (input) input.focus();
+            }, 300);
         }
 
         async function markMessagesAsRead() {
@@ -1375,65 +1442,63 @@
             loadChats();
         }
 
-        async function sendImage() {
-            document.getElementById('imageInput').click();
-        }
-
-        async function uploadImageFile(input) {
-            const file = input.files[0];
-            if (!file || !activeChatWith) return;
-            
-            showNotification('Uploading image...');
-            const storageRef = storage.ref(`images/${activeChatId}/${Date.now()}_${file.name}`);
-            await storageRef.put(file);
-            const url = await storageRef.getDownloadURL();
-            
-            const newMessage = {
-                sender: currentUser,
-                type: 'image',
-                url: url,
-                time: formatTime(),
-                timestamp: Date.now(),
-                read: false
+        function sendImage() {
+            const input = document.getElementById('imageInput');
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file || !activeChatWith) return;
+                
+                showNotification('Uploading image...');
+                const storageRef = storage.ref(`images/${activeChatId}/${Date.now()}_${file.name}`);
+                await storageRef.put(file);
+                const url = await storageRef.getDownloadURL();
+                
+                const newMessage = {
+                    sender: currentUser,
+                    type: 'image',
+                    url: url,
+                    time: formatTime(),
+                    timestamp: Date.now(),
+                    read: false
+                };
+                
+                await database.ref('messages/' + activeChatId).push(newMessage);
+                loadChats();
+                showNotification('Image sent!');
             };
-            
-            await database.ref('messages/' + activeChatId).push(newMessage);
-            input.value = '';
-            loadChats();
-            showNotification('Image sent!');
+            input.click();
         }
 
-        async function sendVideo() {
-            document.getElementById('videoInput').click();
-        }
-
-        async function uploadVideoFile(input) {
-            const file = input.files[0];
-            if (!file || !activeChatWith) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                showNotification('Video too large (max 10MB)');
-                return;
-            }
-            
-            showNotification('Uploading video...');
-            const storageRef = storage.ref(`videos/${activeChatId}/${Date.now()}_${file.name}`);
-            await storageRef.put(file);
-            const url = await storageRef.getDownloadURL();
-            
-            const newMessage = {
-                sender: currentUser,
-                type: 'video',
-                url: url,
-                time: formatTime(),
-                timestamp: Date.now(),
-                read: false
+        function sendVideo() {
+            const input = document.getElementById('videoInput');
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file || !activeChatWith) return;
+                
+                if (file.size > 10 * 1024 * 1024) {
+                    showNotification('Video too large (max 10MB)');
+                    return;
+                }
+                
+                showNotification('Uploading video...');
+                const storageRef = storage.ref(`videos/${activeChatId}/${Date.now()}_${file.name}`);
+                await storageRef.put(file);
+                const url = await storageRef.getDownloadURL();
+                
+                const newMessage = {
+                    sender: currentUser,
+                    type: 'video',
+                    url: url,
+                    time: formatTime(),
+                    timestamp: Date.now(),
+                    read: false
+                };
+                
+                await database.ref('messages/' + activeChatId).push(newMessage);
+                loadChats();
+                showNotification('Video sent!');
             };
-            
-            await database.ref('messages/' + activeChatId).push(newMessage);
-            input.value = '';
-            loadChats();
-            showNotification('Video sent!');
+            input.click();
         }
 
         function closeChat() {
@@ -1446,7 +1511,7 @@
             activeChatId = null;
             
             document.getElementById('contentArea').style.display = 'block';
-            document.getElementById('chatRoomView').style.display = 'none';
+            document.getElementById('chatRoom').classList.remove('active');
             document.querySelector('.bottom-nav').style.display = 'flex';
             
             loadChats();
@@ -1455,6 +1520,7 @@
 
         function handleKeyPress(event) {
             if (event.key === 'Enter') {
+                event.preventDefault();
                 sendMessage();
             }
         }
@@ -1482,57 +1548,55 @@
         function addStatus() {
             const choice = confirm('Post image or video status?');
             if (choice) {
-                document.getElementById('statusImageInput').click();
+                const input = document.getElementById('statusImageInput');
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    showNotification('Uploading status...');
+                    const storageRef = storage.ref(`status/${currentUser}/${Date.now()}_${file.name}`);
+                    await storageRef.put(file);
+                    const url = await storageRef.getDownloadURL();
+                    
+                    await database.ref(`status/${currentUser}`).set({
+                        type: 'image',
+                        url: url,
+                        time: Date.now(),
+                        expires: Date.now() + 24 * 60 * 60 * 1000
+                    });
+                    
+                    loadStatuses();
+                    showNotification('Status posted!');
+                };
+                input.click();
             } else {
-                document.getElementById('statusVideoInput').click();
+                const input = document.getElementById('statusVideoInput');
+                input.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    
+                    if (file.size > 10 * 1024 * 1024) {
+                        showNotification('Video too large (max 10MB)');
+                        return;
+                    }
+                    
+                    showNotification('Uploading status...');
+                    const storageRef = storage.ref(`status/${currentUser}/${Date.now()}_${file.name}`);
+                    await storageRef.put(file);
+                    const url = await storageRef.getDownloadURL();
+                    
+                    await database.ref(`status/${currentUser}`).set({
+                        type: 'video',
+                        url: url,
+                        time: Date.now(),
+                        expires: Date.now() + 24 * 60 * 60 * 1000
+                    });
+                    
+                    loadStatuses();
+                    showNotification('Status posted!');
+                };
+                input.click();
             }
-        }
-
-        async function uploadStatusImage(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            showNotification('Uploading status...');
-            const storageRef = storage.ref(`status/${currentUser}/${Date.now()}_${file.name}`);
-            await storageRef.put(file);
-            const url = await storageRef.getDownloadURL();
-            
-            await database.ref(`status/${currentUser}`).set({
-                type: 'image',
-                url: url,
-                time: Date.now(),
-                expires: Date.now() + 24 * 60 * 60 * 1000
-            });
-            
-            input.value = '';
-            loadStatuses();
-            showNotification('Status posted!');
-        }
-
-        async function uploadStatusVideo(input) {
-            const file = input.files[0];
-            if (!file) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                showNotification('Video too large (max 10MB)');
-                return;
-            }
-            
-            showNotification('Uploading status...');
-            const storageRef = storage.ref(`status/${currentUser}/${Date.now()}_${file.name}`);
-            await storageRef.put(file);
-            const url = await storageRef.getDownloadURL();
-            
-            await database.ref(`status/${currentUser}`).set({
-                type: 'video',
-                url: url,
-                time: Date.now(),
-                expires: Date.now() + 24 * 60 * 60 * 1000
-            });
-            
-            input.value = '';
-            loadStatuses();
-            showNotification('Status posted!');
         }
 
         async function loadStatuses() {
@@ -1607,7 +1671,10 @@
 
         // ==================== PAGE NAVIGATION ====================
         function switchPage(page) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const pages = ['chatsPage', 'usersPage', 'statusPage', 'settingsPage'];
+            pages.forEach(p => {
+                document.getElementById(p).classList.remove('active');
+            });
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             
             if (page === 'chats') {
@@ -1673,4 +1740,4 @@
         showSplashAndLoad();
     </script>
 </body>
-    </html>
+</html>
