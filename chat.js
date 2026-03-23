@@ -181,15 +181,21 @@ function sendVideo() {
 function closeChat() {
     if (messageListener) messageListener();
     if (typingListener) typingListener();
-    messageListener = null; typingListener = null;
+    messageListener = null; 
+    typingListener = null;
+
     if (typingTimeout) clearTimeout(typingTimeout);
-    activeChatWith = null; activeChatId = null;
+
+    activeChatWith = null; 
+    activeChatId = null;
+
     document.getElementById('contentArea').style.display = 'block';
     document.getElementById('chatRoom').classList.remove('active');
     document.querySelector('.bottom-nav').style.display = 'flex';
+
+    // refresh chat list
     if (window.loadChats) loadChats();
 }
-
 function handleKeyPress(event) { 
     if (event.key === 'Enter') sendMessage(); 
 }
