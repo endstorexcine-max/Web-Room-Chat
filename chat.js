@@ -53,6 +53,10 @@ async function loadChats() {
     `).join('');
 }
 
+function refChat() {
+    location.reload();
+}
+
 async function startChat(otherUser) {
     activeChatWith = otherUser;
     activeChatId = [currentUser, otherUser].sort().join('_');
