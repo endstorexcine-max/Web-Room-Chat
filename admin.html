@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatWave - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="admin-body">
+    <div id="loginPanel" class="admin-login-card">
+        <h2><i class="fas fa-shield-alt"></i> Admin Panel</h2>
+        <input type="password" id="adminPassword" placeholder="Admin Password">
+        <div id="loginError" class="error-msg"></div>
+        <button class="auth-btn" onclick="adminLogin()">Login</button>
+    </div>
+
+    <div id="adminPanel" style="display: none;">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1><i class="fas fa-crown"></i> ChatWave Admin</h1>
+                <button class="btn-danger" onclick="adminLogout()">Logout</button>
+            </div>
+            <div class="admin-stats" id="adminStats"></div>
+            <div class="maintenance-switch">
+                <span><i class="fas fa-tools"></i> Maintenance Mode</span>
+                <div class="toggle-switch" id="maintenanceToggle" onclick="toggleMaintenance()"></div>
+                <span id="maintenanceStatus">Off</span>
+            </div>
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('users')">Users</button>
+                <button class="admin-tab" onclick="switchAdminTab('groups')">Groups</button>
+                <button class="admin-tab" onclick="switchAdminTab('posts')">Posts</button>
+            </div>
+            <div id="adminUsersTab"></div>
+            <div id="adminGroupsTab" style="display: none;"></div>
+            <div id="adminPostsTab" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
