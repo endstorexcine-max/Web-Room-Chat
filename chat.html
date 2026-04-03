@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ChatWave - Chats</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="header-title">Chats</div>
+            <div class="header-avatar" onclick="goToSettings()">
+                <div class="avatar-small" id="headerAvatar">U</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="chats-list" id="chatsList">
+                <div class="empty-state">Loading chats...</div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-item" onclick="location.href='home.html'"><i class="fas fa-home nav-icon"></i><span>Home</span></button>
+            <button class="nav-item active" onclick="location.href='chat.html'"><i class="fas fa-comment nav-icon"></i><span>Chats</span></button>
+            <button class="nav-item" onclick="location.href='groups.html'"><i class="fas fa-users nav-icon"></i><span>Groups</span></button>
+            <button class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog nav-icon"></i><span>Settings</span></button>
+        </div>
+    </div>
+
+    <div id="chatRoom" class="chat-room">
+        <div class="chat-header">
+            <button class="back-btn" onclick="closeChat()"><i class="fas fa-arrow-left"></i></button>
+            <div class="chat-avatar" id="chatRoomAvatar">U</div>
+            <div><div id="chatRoomName"></div><div id="chatRoomStatus" class="chat-status"></div></div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <button class="media-btn" onclick="showMaintenancePopup()"><i class="fas fa-image"></i></button>
+            <input type="text" id="messageInput" class="chat-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div id="maintenancePopup" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-tools"></i> Maintenance Mode</h3>
+            <p>Image/Video upload is currently under maintenance.</p>
+            <button class="auth-btn" onclick="closeMaintenancePopup()">OK</button>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="notifications.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>
