@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ChatWave - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="header-title">ChatWave</div>
+            <div class="header-avatar" onclick="goToSettings()">
+                <div class="avatar-small" id="headerAvatar">U</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- Create Post -->
+            <div class="create-post-card">
+                <div class="create-post-header">
+                    <div class="avatar-small" id="postAvatar">U</div>
+                    <input type="text" id="postInput" class="post-input" placeholder="What's happening?">
+                </div>
+                <div class="create-post-actions">
+                    <button class="post-media-btn" id="mediaBtn" onclick="showMaintenancePopup()"><i class="fas fa-image"></i> Media</button>
+                    <button class="post-btn" onclick="createPost()">Post</button>
+                </div>
+                <div id="postCooldown" class="cooldown-text"></div>
+            </div>
+
+            <!-- Feed -->
+            <div id="feedContainer" class="feed-container">
+                <div class="loading-spinner">Loading feed...</div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="location.href='home.html'"><i class="fas fa-home nav-icon"></i><span>Home</span></button>
+            <button class="nav-item" onclick="location.href='chat.html'"><i class="fas fa-comment nav-icon"></i><span>Chats</span></button>
+            <button class="nav-item" onclick="location.href='groups.html'"><i class="fas fa-users nav-icon"></i><span>Groups</span></button>
+            <button class="nav-item" onclick="location.href='settings.html'"><i class="fas fa-cog nav-icon"></i><span>Settings</span></button>
+        </div>
+    </div>
+
+    <!-- Maintenance Popup -->
+    <div id="maintenancePopup" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-tools"></i> Maintenance Mode</h3>
+            <p>Image/Video upload is currently under maintenance.</p>
+            <p>Please try again later!</p>
+            <button class="auth-btn" onclick="closeMaintenancePopup()">OK</button>
+        </div>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script src="notifications.js"></script>
+    <script src="home.js"></script>
+</body>
+</html>
